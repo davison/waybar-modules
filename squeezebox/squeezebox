@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+#
+# ░█▀▀░▄▀▄░█░█░█▀▀░█▀▀░▀▀█░█▀▀░█▀▄░█▀█░█░█
+# ░▀▀█░█\█░█░█░█▀▀░█▀▀░▄▀░░█▀▀░█▀▄░█░█░▄▀▄
+# ░▀▀▀░░▀\░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀▀░░▀▀▀░▀░▀
+#
+
+from pysqueezebox import Server
+import aiohttp
+import asyncio
+import json
+import sys
+
+server_name = sys.argv[1] or "192.168.21.150"
+player_name = sys.argv[2] or "Office"
+response = {}
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        try:
+            lms = Server(session, server_name)
+            player = await lms.async_get_player(name=player_name)
+            await player.async_update()
+
+            if len(sys.argv) == 4:
+                await player.async_toggle_pause()
+            
+            try:
+                pos = player.time/player.duration*100
+            except:
+                pos = 0
+            
+            response["text"] = "{0} ({1})".format(
+                player.title,
+                player.artist
+            )
+            response["tooltip"] = "LMS Player: {0}\nAlbum: {1}\nTrack type: {2}\nBitrate: {3}\nIP: {4}".format(
+                player_name,
+                player.album or "",
+                "", #player.type,
+                "", #player.remoteMeta.bitrate,
+                "" #player.player_ip
+            )
+            response["percentage"] = int(pos)
+            response["class"] = player.mode
+
+        except:
+            response["text"] = "Error (server {0} / player {1})".format(
+                server_name, 
+                player_name
+            )
+            response["class"] = "error"
+    
+        print(json.dumps(response))
+
+loop = asyncio.new_event_loop()
+loop.run_until_complete(main())
+

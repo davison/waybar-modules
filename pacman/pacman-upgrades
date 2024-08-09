@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# ░█▀█░█▀█░█▀▀░█▄█░█▀█░█▀█░░░░░█░█░█▀█░█▀▀░█▀▄░█▀█░█▀▄░█▀▀░█▀▀
+# ░█▀▀░█▀█░█░░░█░█░█▀█░█░█░▄▄▄░█░█░█▀▀░█░█░█▀▄░█▀█░█░█░█▀▀░▀▀█
+# ░▀░░░▀░▀░▀▀▀░▀░▀░▀░▀░▀░▀░░░░░▀▀▀░▀░░░▀▀▀░▀░▀░▀░▀░▀▀░░▀▀▀░▀▀▀
+#
+# relies on checkupdates script from the extra/pacman-contrib package
+#
+# ----------------------------------------------------------------------------
+
+command -v checkupdates > /dev/null || {
+    echo "please install pacman-contrib"
+    exit
+}
+
+set -o pipefail
+tmp=/tmp/checkupdates
+
+checkupdates --nocolor > $tmp
+tot=$(cat $tmp | wc -l)
+ret=$?
+
+if [ $ret -ge 2 ]; then 
+    # no updates
+    echo '{"text":""}'
+else
+    escaped_list=$(awk '{printf "%s\\n", $0}' $tmp)
+    echo "{\"text\": \"󱧘  $tot\", \"tooltip\": \"$escaped_list\"}"
+fi
