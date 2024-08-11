@@ -9,7 +9,7 @@
 # ----------------------------------------------------------------------------
 
 command -v checkupdates > /dev/null || {
-    echo "please install pacman-contrib"
+    echo '{"text":"please install pacman-contrib"}'
     exit
 }
 
