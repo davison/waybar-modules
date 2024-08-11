@@ -1,6 +1,6 @@
 # pacman-upgrades
 
-Shows the number of packages awaiting upgrade on the local system. 
+Shows the number of packages awaiting upgrade on the local system (has no output if there are none). 
 
 
 ## Example Config
@@ -18,7 +18,7 @@ You can use it as follows;
     }
 ```
 
-In the example shown, clicking on the bar will open a read-only xterm showing which packages are the ones requiring the upgrade.
+In the example shown, hovering over the module will show a tooltip with the packages requiring the upgrade. Clicking on it should open a terminal (change if you don't use `alacritty`) to process the upgrades.
 
 Set the following in your waybar directory's `style.conf` and adjust to taste
 
